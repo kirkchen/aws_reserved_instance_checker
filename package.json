@@ -1,13 +1,17 @@
 {
   "name": "aws_reserved_instance_checker",
-  "version": "1.0.0",
-  "description": "Check is there any resource is not included in reserved instances",
+  "version": "0.0.1",
+  "description": "Check is there any resource not included in active reserved instances and send notification to slack.",
   "main": "index.js",
   "scripts": {
     "start": "node ./build/index.js",
     "build": "rm -rf build && tsc",
     "test": "nyc --reporter=text-summary mocha -r ts-node/register src/**/*Spec.ts",
     "test-ci": "nyc mocha -r ts-node/register --reporter mocha-junit-reporter src/**/*Spec.ts > coverage.lcov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:kirkchen/aws_reserved_instance_checker.git"
   },
   "nyc": {
     "include": [
