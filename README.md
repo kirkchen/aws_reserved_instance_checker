@@ -6,17 +6,10 @@ Check is there any resource not included in active reserved instances and send n
 
 ## How to use
 
-1. Clone this repo
+1. Install AWS Reserved Instance Checker
 
     ``` bash
-    $ git clone git@github.com:kirkchen/aws_reserved_instance_checker.git
-    ```
-
-1. Install dependencies && Build
-
-    ``` bash
-    $ npm install
-    $ npm build
+    $ npm install -g aws_reserved_instance_checker
     ```
 
 1. Run 
@@ -26,7 +19,7 @@ Check is there any resource not included in active reserved instances and send n
     $ export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
     $ export RICHECKER_WEBHOOK_URL={YOUR SLACK WEBHOOK URL}
     $ export RICHECKER_REGION={YOUR AWS REGION (default: us-east-1)}
-    $ npm start
+    $ aws_reserved_instance_checker
     ```
 
 ## Todo
