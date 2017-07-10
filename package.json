@@ -1,0 +1,52 @@
+{
+  "name": "aws_reserved_instance_checker",
+  "version": "1.0.0",
+  "description": "Check is there any resource is not included in reserved instances",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./build/index.js",
+    "build": "rm -rf build && tsc",
+    "test": "nyc --reporter=text-summary mocha -r ts-node/register src/**/*Spec.ts",
+    "test-ci": "nyc mocha -r ts-node/register --reporter mocha-junit-reporter src/**/*Spec.ts > coverage.lcov"
+  },
+  "nyc": {
+    "include": [
+      "src/**/!(*Spec).ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "text-lcov"
+    ],
+    "sourceMap": true,
+    "instrument": true
+  },
+  "author": "Kirk Chen <rwk0119@yahoo.com.tw>",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/client": "^3.10.0",
+    "aws-sdk": "^2.80.0",
+    "mocha-junit-reporter": "^1.13.0"
+  },
+  "devDependencies": {
+    "@types/aws-sdk": "^2.7.0",
+    "@types/chai": "^4.0.1",
+    "@types/chai-as-promised": "^0.0.31",
+    "@types/es6-promise": "^0.0.32",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.7",
+    "@types/sinon": "^2.3.2",
+    "chai": "^4.0.2",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^3.4.2",
+    "nyc": "^11.0.3",
+    "sinon": "^2.3.6",
+    "source-map-support": "^0.4.15",
+    "ts-node": "^3.1.0",
+    "typescript": "^2.4.1"
+  }
+}

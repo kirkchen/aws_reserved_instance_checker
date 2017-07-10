@@ -1,0 +1,7 @@
+test:
+  override:
+    - npm run test-ci:
+        environment:
+          MOCHA_FILE: $CIRCLE_TEST_REPORTS/junit/test-results.xml
+  post:
+    - bash <(curl -s https://codecov.io/bash)

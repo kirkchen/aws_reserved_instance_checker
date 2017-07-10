@@ -1,0 +1,18 @@
+### Visual Studio Code 
+.vscode/
+
+### Node.js
+node_modules/
+build/
+**/*.log
+
+### Typescript
+**/*.js
+
+### Mocha
+test-results.xml
+
+### Coverage
+.nyc_output/
+coverage/
+coverage.lcov
