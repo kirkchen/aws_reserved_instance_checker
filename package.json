@@ -1,6 +1,6 @@
 {
   "name": "aws_reserved_instance_checker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Check is there any resource not included in active reserved instances and send notification to slack.",
   "main": "index.js",
   "scripts": {
