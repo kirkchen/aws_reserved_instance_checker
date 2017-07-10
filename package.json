@@ -31,6 +31,9 @@
   },
   "author": "Kirk Chen <rwk0119@yahoo.com.tw>",
   "license": "MIT",
+  "bin": {
+    "aws_reserved_instance_checker": "./bin/aws_reserved_instance_checker.js"
+  },
   "dependencies": {
     "@slack/client": "^3.10.0",
     "aws-sdk": "^2.80.0",
