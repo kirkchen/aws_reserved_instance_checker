@@ -1,6 +1,7 @@
 # AWS Reserved Instance Checker
 [![CircleCI](https://circleci.com/gh/kirkchen/aws_reserved_instance_checker.svg?style=shield)](https://circleci.com/gh/kirkchen/aws_reserved_instance_checker)
 [![codecov](https://codecov.io/gh/kirkchen/aws_reserved_instance_checker/branch/master/graph/badge.svg)](https://codecov.io/gh/kirkchen/aws_reserved_instance_checker)
+[![npm version](https://badge.fury.io/js/aws_reserved_instance_checker.svg)](https://badge.fury.io/js/aws_reserved_instance_checker)
 
 Check is there any resource not included in active reserved instances and send notification to slack.
 
