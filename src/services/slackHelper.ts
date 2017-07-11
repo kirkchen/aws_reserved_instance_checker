@@ -6,7 +6,8 @@ import '../models/instanceData';
 export default class SlackHelper {
     constructor(
         private region: string,
-        private webhookUrl: string) {
+        private webhookUrl: string,
+        private channel?: string) {
     }
 
     formatInstanceToSlackAttachment(instances: InstanceData[]) {
@@ -53,6 +54,10 @@ export default class SlackHelper {
         }
 
         slaceMessage.attachments[0].footer = `<https://${this.region}.console.aws.amazon.com/ec2/v2/home?region=${this.region}#Instances:instanceId=${instanceIds.join(',').trim()};sort=instanceId|Click to details>`
+
+        if (this.channel) {
+            slaceMessage.channel = this.channel
+        }
 
         return slaceMessage;
     }

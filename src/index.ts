@@ -6,6 +6,7 @@ import App from './apps/app';
 export default function CheckAwsReservedInstance(): Promise<void> {
     let webhookUrl: string | undefined = process.env.RICHECKER_WEBHOOK_URL;
     let region: string = process.env.RICHECKER_REGION || 'us-east-1';
+    let channel: string | undefined = process.env.RICHECKER_SLACK_CHANNEL;
 
     if (!webhookUrl) {
         throw new Error('Webhook url is not set, please check your environment variable RICHECKER_WEBHOOK_URL');
@@ -13,7 +14,7 @@ export default function CheckAwsReservedInstance(): Promise<void> {
     let result = new App(
         new EC2Service(region), 
         new ReservedInstanceCalculator(), 
-        new SlackHelper(region, webhookUrl)).Run();
+        new SlackHelper(region, webhookUrl, channel)).Run();
 
     return result;
 }
