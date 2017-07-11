@@ -4,6 +4,8 @@ declare module '@slack/client';
 interface SlackMessage {
     username?: string;
 
+    channel?: string;
+
     attachments: SlackMessageAttachment[];
 }
 
