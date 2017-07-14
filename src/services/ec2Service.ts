@@ -78,10 +78,10 @@ export default class EC2Service {
                                 }
 
                                 let instanceData: InstanceData = {
-                                    InstanceId: instance.InstanceId || '',
-                                    InstanceType: instance.InstanceType || '',
-                                    LaunchTime: instance.LaunchTime || new Date(),
-                                    AvailabilityZone: availabilityZone || '',
+                                    InstanceId: instance.InstanceId!,
+                                    InstanceType: instance.InstanceType!,
+                                    LaunchTime: instance.LaunchTime!,
+                                    AvailabilityZone: availabilityZone!,
                                     InstanceName: instanceName
                                 };
 

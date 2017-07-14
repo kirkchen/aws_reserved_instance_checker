@@ -73,7 +73,7 @@ export default class RDSService {
                             let instanceData: InstanceData = {
                                 InstanceId: dbInstance.DbiResourceId!,
                                 InstanceType: dbInstance.DBInstanceClass!,
-                                LaunchTime: dbInstance.InstanceCreateTime || new Date,
+                                LaunchTime: dbInstance.InstanceCreateTime!,
                                 AvailabilityZone: `MultiAZ-${dbInstance.MultiAZ}`,
                                 InstanceName: dbInstance.DBInstanceIdentifier
                             };
