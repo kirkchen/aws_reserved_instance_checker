@@ -102,4 +102,95 @@ describe('RDSService', () => {
             describeReservedDBInstancesStub.callsArgWith(1, error, null);
         }
     });
+
+    describe('#describeRunningInstances', () => {
+        let describeDBInstancesStub: sinon.SinonStub;
+        beforeEach(() => {
+            describeDBInstancesStub = environment.stub();
+            rdsStub.prototype.describeDBInstances = describeDBInstancesStub;
+        })
+
+        it('should initial EC2 with region', () => {
+            rdsStub.withArgs({ region: region });
+
+            let ec2Service = new RDSService(region);
+            let reservedInstances = ec2Service.describeRunningInstances();
+
+            expect(rdsStub.calledOnce).to.be.true;
+            expect(rdsStub.getCall(0).args[0]).to.be.eql({ region: region });
+        });
+
+        it('should return running instances if has data', (done) => {
+            let runningInstanceList: AWS.RDS.Types.DBInstanceMessage = {
+                DBInstances: [
+                    {
+                        InstanceCreateTime: new Date('2017-02-07T08:52:21.000Z'),
+                        DbiResourceId: 'db-JHISHIRLA3RDEIJHCLVTWQJVEM',
+                        DBInstanceClass: "db.r3.2xlarge",
+                        MultiAZ: true,
+                        DBInstanceIdentifier: "db-1"
+                    },
+                    {
+                        InstanceCreateTime: new Date('2017-02-07T08:52:21.000Z'),
+                        DbiResourceId: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
+                        DBInstanceClass: "db.r3.large",
+                        MultiAZ: false,
+                        DBInstanceIdentifier: "db-2"
+                    }
+                ]
+            };
+            let expected: InstanceData[] = [
+                {
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'db-JHISHIRLA3RDEIJHCLVTWQJVEM',
+                    InstanceType: "db.r3.2xlarge",
+                    AvailabilityZone: "MultiAZ-true",
+                    InstanceName: "db-1"
+                }, {
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
+                    InstanceType: "db.r3.large",
+                    AvailabilityZone: "MultiAZ-false",
+                    InstanceName: "db-2",
+                }
+            ]
+            describeInstancesShouldReturns(runningInstanceList)
+
+            let rdsService = new RDSService(region);
+            let actual = rdsService.describeRunningInstances();
+
+            expect(actual).to.eventually.have.deep.equal(expected).notify(done);
+        });
+
+        it('should return empty array if no data exists', (done) => {
+            let runningInstanceList: AWS.RDS.Types.DBInstanceMessage = {
+                DBInstances: undefined
+            };
+            let expected: InstanceData[] = []
+            describeInstancesShouldReturns(runningInstanceList)
+
+            let rdsService = new RDSService(region);
+            let actual = rdsService.describeRunningInstances();
+
+            expect(actual).to.eventually.have.deep.equal(expected).notify(done);
+        });
+
+        it('should be rejected if errro occurs', (done) => {
+            let error = new Error('Error occors');
+            describeRunningInstancesShouldThrows(error);
+
+            let rdsService = new RDSService(region);
+            let reservedInstances = rdsService.describeRunningInstances();
+
+            expect(reservedInstances).to.be.rejectedWith(error).notify(done);
+        })
+
+        function describeInstancesShouldReturns(runningInstanceList: AWS.RDS.Types.DBInstanceMessage) {
+            describeDBInstancesStub.callsArgWith(1, null, runningInstanceList);
+        }
+
+        function describeRunningInstancesShouldThrows(error: Error) {
+            describeDBInstancesStub.callsArgWith(1, error, null);
+        }
+    })
 });

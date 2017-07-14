@@ -46,4 +46,48 @@ export default class RDSService {
             })
         });
     }
+
+    describeRunningInstances(): Promise<InstanceData[]> {
+        let rds = new RDS({ region: this.region });
+        let params: RDS.Types.DescribeDBInstancesMessage = {
+            Filters: [
+                {
+                    Name: 'instance-state-name',
+                    Values: [
+                        'running'
+                    ]
+                }
+            ]
+        }
+
+        return new Promise((resolve, reject) => {
+            rds.describeDBInstances(params, (err, data) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                if (data.DBInstances) {
+                    let result: (InstanceData | undefined)[] = data.DBInstances
+                        .map((dbInstance) => {
+                            let instanceData: InstanceData = {
+                                InstanceId: dbInstance.DbiResourceId!,
+                                InstanceType: dbInstance.DBInstanceClass!,
+                                LaunchTime: dbInstance.InstanceCreateTime || new Date,
+                                AvailabilityZone: `MultiAZ-${dbInstance.MultiAZ}`,
+                                InstanceName: dbInstance.DBInstanceIdentifier
+                            };
+
+                            return instanceData;
+                        })
+                        .filter((instance) => !!instance);
+
+                    resolve(result as InstanceData[]);
+                    return;
+                }
+
+                resolve([]);
+            })
+        });
+    }
 }
