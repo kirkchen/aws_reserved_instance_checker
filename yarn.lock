@@ -19,12 +19,6 @@
     winston "^2.1.1"
     ws "^1.0.1"
 
-"@types/aws-sdk@^2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@types/aws-sdk/-/aws-sdk-2.7.0.tgz#83588b3d14ebdca1d4ce5e023387577568ce82f3"
-  dependencies:
-    aws-sdk "*"
-
 "@types/chai-as-promised@^0.0.31":
   version "0.0.31"
   resolved "https://registry.yarnpkg.com/@types/chai-as-promised/-/chai-as-promised-0.0.31.tgz#e1e905ea6d971dafcad36560c8f1f7a7d690c5e5"
@@ -141,7 +135,7 @@ asynckit@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
 
-aws-sdk@*, aws-sdk@^2.80.0:
+aws-sdk@^2.80.0:
   version "2.80.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.80.0.tgz#61ced747eb981609483aec53e8d654d3cc9d1435"
   dependencies:
