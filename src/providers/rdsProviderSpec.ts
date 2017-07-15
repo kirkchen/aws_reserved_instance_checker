@@ -176,12 +176,14 @@ describe('RDSProvider', () => {
             };
             let expected: InstanceData[] = [
                 {
+                    GroupKey: 'db.r3.2xlarge with MultiAZ',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'db-JHISHIRLA3RDEIJHCLVTWQJVEM',
                     InstanceType: "db.r3.2xlarge",
                     AvailabilityZone: "MultiAZ-true",
                     InstanceName: "db-1"
                 }, {
+                    GroupKey: 'db.r3.large without MultiAZ',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
                     InstanceType: "db.r3.large",
@@ -220,6 +222,7 @@ describe('RDSProvider', () => {
             };
             let expected: InstanceData[] = [
                 {
+                    GroupKey: "db.r3.2xlarge with MultiAZ",
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'db-JHISHIRLA3RDEIJHCLVTWQJVEM',
                     InstanceType: "db.r3.2xlarge",
@@ -271,12 +274,14 @@ describe('RDSProvider', () => {
         it('should return url for instance', () => {
             let instanceDatas: InstanceData[] = [
                 {
+                    GroupKey: '',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'db-JHISHIRLA3RDEIJHCLVTWQJVEM',
                     InstanceType: "db.r3.2xlarge",
                     AvailabilityZone: "MultiAZ-true",
                     InstanceName: "db-1"
                 }, {
+                    GroupKey: '',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
                     InstanceType: "db.r3.large",

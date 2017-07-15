@@ -27,6 +27,7 @@ describe('SlackHelper', () => {
             let resourceType = ResourceType.EC2; 
             let instanceDataList: InstanceData[] = [
                 {
+                    GroupKey: 't2.medium @ ap-northeast-1a',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'i-05e6b03e39edd7162',
                     InstanceType: "t2.medium",
@@ -34,6 +35,7 @@ describe('SlackHelper', () => {
                     InstanceName: "instance-a"
                 },
                 {
+                    GroupKey: 'c4.large @ ap-northeast-1c',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'i-07d1a68260e73015c',
                     InstanceType: "c4.large",
@@ -41,6 +43,7 @@ describe('SlackHelper', () => {
                     InstanceName: "instance-b",
                 },
                 {
+                    GroupKey: 't2.medium @ ap-northeast-1a',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'i-07d1a6fdserf3015c',
                     InstanceType: "t2.medium",
@@ -78,6 +81,7 @@ describe('SlackHelper', () => {
             let resourceType = ResourceType.RDS; 
             let instanceDataList: InstanceData[] = [
                 {
+                    GroupKey: 'db.t2.large with MultiAZ',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
                     InstanceType: "db.t2.large",
@@ -91,7 +95,7 @@ describe('SlackHelper', () => {
                     color: "warning",
                     fields: [
                         {
-                            title: 'db.t2.large @ MultiAZ-true',
+                            title: 'db.t2.large with MultiAZ',
                             value: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
                             short: true
                         }

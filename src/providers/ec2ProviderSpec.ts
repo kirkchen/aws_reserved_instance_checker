@@ -163,12 +163,14 @@ describe('EC2Provider', () => {
             };
             let expected: InstanceData[] = [
                 {
+                    GroupKey: 't2.medium @ ap-northeast-1a',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'i-05e6b03e39edd7162',
                     InstanceType: "t2.medium",
                     AvailabilityZone: "ap-northeast-1a",
                     InstanceName: "instance-a"
                 }, {
+                    GroupKey: 't2.medium @ ap-northeast-1c',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'i-07d1a68260e73015c',
                     InstanceType: "t2.medium",
@@ -212,6 +214,7 @@ describe('EC2Provider', () => {
             };
             let expected: InstanceData[] = [
                 {
+                    GroupKey: 't2.medium @ ap-northeast-1a',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'i-05e6b03e39edd7162',
                     InstanceType: "t2.medium",
@@ -264,12 +267,14 @@ describe('EC2Provider', () => {
         it('should return url for instance', () => {
            let instanceDatas: InstanceData[] = [
                 {
+                    GroupKey: '',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'i-05e6b03e39edd7162',
                     InstanceType: "t2.medium",
                     AvailabilityZone: "ap-northeast-1a",
                     InstanceName: "instance-a"
                 }, {
+                    GroupKey: '',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'i-07d1a68260e73015c',
                     InstanceType: "t2.medium",

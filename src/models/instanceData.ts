@@ -1,4 +1,6 @@
 interface InstanceData {
+    GroupKey: string;
+
     InstanceId: string;
 
     InstanceType: string;

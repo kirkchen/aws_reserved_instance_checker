@@ -60,6 +60,7 @@ export default class RDSProvider implements ResourceProvider {
                         .filter((dbInstance) => dbInstance.DBInstanceStatus === 'available')
                         .map((dbInstance) => {
                             let instanceData: InstanceData = {
+                                GroupKey: `${dbInstance.DBInstanceClass} ${dbInstance.MultiAZ ? 'with' : 'without'} MultiAZ`,
                                 InstanceId: dbInstance.DbiResourceId!,
                                 InstanceType: dbInstance.DBInstanceClass!,
                                 LaunchTime: dbInstance.InstanceCreateTime!,
@@ -81,7 +82,7 @@ export default class RDSProvider implements ResourceProvider {
     }
 
     getInstancesUrl(instances: InstanceData[]): string | undefined {
-        if(instances.length === 0) {
+        if (instances.length === 0) {
             return undefined;
         }
 

@@ -15,7 +15,7 @@ export default class SlackHelper {
         let groupedInstanceDatas: GroupedInstanceData = {};
 
         instances.forEach((instance) => {
-            let key = `${instance.InstanceType} @ ${instance.AvailabilityZone}`;
+            let key = instance.GroupKey;
             if (!groupedInstanceDatas[key]) {
                 groupedInstanceDatas[key] = [];
             }

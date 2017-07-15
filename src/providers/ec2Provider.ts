@@ -82,6 +82,7 @@ export default class EC2Provider implements ResourceProvider {
                                 }
 
                                 let instanceData: InstanceData = {
+                                    GroupKey: `${instance.InstanceType} @ ${availabilityZone}`,
                                     InstanceId: instance.InstanceId!,
                                     InstanceType: instance.InstanceType!,
                                     LaunchTime: instance.LaunchTime!,
