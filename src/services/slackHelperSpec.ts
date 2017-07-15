@@ -58,16 +58,15 @@ describe('SlackHelper', () => {
                     fields: [
                         {
                             title: 't2.medium @ ap-northeast-1a',
-                            value: 'i-05e6b03e39edd7162, i-07d1a6fdserf3015c',
+                            value: 'instance-a, instance-c',
                             short: true
                         },
                         {
                             title: 'c4.large @ ap-northeast-1c',
-                            value: 'i-07d1a68260e73015c',
+                            value: 'instance-b',
                             short: true
                         }
-                    ],
-                    footer: `<https://ap-northeast-1.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-1#Instances:instanceId=i-05e6b03e39edd7162,i-07d1a6fdserf3015c,i-07d1a68260e73015c;sort=instanceId|Click to details>`
+                    ]
                 }
 
 
@@ -96,11 +95,10 @@ describe('SlackHelper', () => {
                     fields: [
                         {
                             title: 'db.t2.large with MultiAZ',
-                            value: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
+                            value: 'db-1',
                             short: true
                         }
-                    ],
-                    footer: `<https://ap-northeast-1.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-1#Instances:instanceId=db-JHISHIRLA3IDENBHCLVTWQJVEM;sort=instanceId|Click to details>`
+                    ]
                 }
 
 

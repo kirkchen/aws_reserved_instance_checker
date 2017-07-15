@@ -1,3 +1,3 @@
 interface GroupedInstanceData {
-    [key: string]: string[];
+    [key: string]: InstanceData[];
 }

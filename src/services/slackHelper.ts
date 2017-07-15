@@ -20,7 +20,7 @@ export default class SlackHelper {
                 groupedInstanceDatas[key] = [];
             }
 
-            groupedInstanceDatas[key].push(instance.InstanceId);
+            groupedInstanceDatas[key].push(instance);
         })
 
         let resourceTypeString = ResourceType[resourceType];
@@ -28,15 +28,14 @@ export default class SlackHelper {
             {
                 title: `${resourceTypeString} instances not in reserved instance list`,
                 color: "warning",
-                fields: [],
-                footer: ""
+                fields: []
             }
 
         let instanceIds: string[] = []
         for (let key in groupedInstanceDatas) {
             let field: SlackMessageAttachmentField = {
                 title: key,
-                value: groupedInstanceDatas[key].join(', '),
+                value: groupedInstanceDatas[key].map((instance)=>instance.InstanceName).join(', '),
                 short: true
             }
 
@@ -47,9 +46,6 @@ export default class SlackHelper {
                 })
             }
         }
-
-        // TODO: Footer should change depend on resource type
-        slaceMessageAttachment.footer = `<https://${this.region}.console.aws.amazon.com/ec2/v2/home?region=${this.region}#Instances:instanceId=${instanceIds.join(',').trim()};sort=instanceId|Click to details>`
 
         return slaceMessageAttachment;
     }
