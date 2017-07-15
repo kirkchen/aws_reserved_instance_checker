@@ -4,7 +4,7 @@ import '../models/instanceData';
 import '../models/reservedInstanceData';
 import ResourceProvider from '../providers/resourceProvider';
 
-export default class RDSService implements ResourceProvider {
+export default class RDSProvider implements ResourceProvider {
     constructor(
         private region: string) {
     }
@@ -78,5 +78,15 @@ export default class RDSService implements ResourceProvider {
                 resolve([]);
             })
         });
+    }
+
+    getInstancesUrl(instances: InstanceData[]): string | undefined {
+        if(instances.length === 0) {
+            return undefined;
+        }
+
+        let result = `<https://${this.region}.console.aws.amazon.com/rds/home?region=${this.region}|Click to details>`
+
+        return result;
     }
 }

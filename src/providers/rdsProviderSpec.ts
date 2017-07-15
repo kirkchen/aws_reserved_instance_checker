@@ -1,4 +1,4 @@
-import RDSService from './rdsService';
+import RDSProvider from './rdsProvider';
 import { expect, use } from 'chai';
 import * as chaiAsPromise from 'chai-as-promised';
 import { sandbox } from 'sinon';
@@ -6,7 +6,7 @@ import * as AWS from 'aws-sdk';
 
 use(chaiAsPromise);
 
-describe('RDSService', () => {
+describe('RDSProvider', () => {
     let region = 'ap-northeast-1';
     let environment: sinon.SinonSandbox;
     let rdsStub: sinon.SinonStub;
@@ -29,8 +29,8 @@ describe('RDSService', () => {
         it('should initial RDS with region', () => {
             rdsStub.withArgs({ region: region });
 
-            let rdsService = new RDSService(region);
-            let reservedInstances = rdsService.describeActiveReservedInstances();
+            let rdsProvider = new RDSProvider(region);
+            let reservedInstances = rdsProvider.describeActiveReservedInstances();
 
             expect(rdsStub.calledOnce).to.be.true;
             expect(rdsStub.getCall(0).args[0]).to.be.eql({ region: region });
@@ -67,8 +67,8 @@ describe('RDSService', () => {
             ]
             describeReservedInstancesShouldReturns(reservedInstanceList)
 
-            let rdsService = new RDSService(region);
-            let reservedInstances = rdsService.describeActiveReservedInstances();
+            let rdsProvider = new RDSProvider(region);
+            let reservedInstances = rdsProvider.describeActiveReservedInstances();
 
             expect(reservedInstances).to.eventually.deep.equal(expected).notify(done);
         });
@@ -99,8 +99,8 @@ describe('RDSService', () => {
             ];
             describeReservedInstancesShouldReturns(reservedInstanceList)
 
-            let rdsService = new RDSService(region);
-            let reservedInstances = rdsService.describeActiveReservedInstances();
+            let rdsProvider = new RDSProvider(region);
+            let reservedInstances = rdsProvider.describeActiveReservedInstances();
 
             expect(reservedInstances).to.eventually.deep.equal(expected).notify(done);
         });
@@ -111,8 +111,8 @@ describe('RDSService', () => {
             let expected: ReservedInstanceData[] = [];
             describeReservedInstancesShouldReturns(reservedInstanceList)
 
-            let rdsService = new RDSService(region);
-            let reservedInstances = rdsService.describeActiveReservedInstances();
+            let rdsProvider = new RDSProvider(region);
+            let reservedInstances = rdsProvider.describeActiveReservedInstances();
 
             expect(reservedInstances).to.eventually.have.members(expected).notify(done);
         })
@@ -121,8 +121,8 @@ describe('RDSService', () => {
             let error = new Error('Error occors');
             describeReservedInstancesShouldThrows(error);
 
-            let rdsService = new RDSService(region);
-            let reservedInstances = rdsService.describeActiveReservedInstances();
+            let rdsProvider = new RDSProvider(region);
+            let reservedInstances = rdsProvider.describeActiveReservedInstances();
 
             expect(reservedInstances).to.be.rejectedWith(error).notify(done);
         })
@@ -146,7 +146,7 @@ describe('RDSService', () => {
         it('should initial EC2 with region', () => {
             rdsStub.withArgs({ region: region });
 
-            let ec2Service = new RDSService(region);
+            let ec2Service = new RDSProvider(region);
             let reservedInstances = ec2Service.describeRunningInstances();
 
             expect(rdsStub.calledOnce).to.be.true;
@@ -191,8 +191,8 @@ describe('RDSService', () => {
             ]
             describeInstancesShouldReturns(runningInstanceList)
 
-            let rdsService = new RDSService(region);
-            let actual = rdsService.describeRunningInstances();
+            let rdsProvider = new RDSProvider(region);
+            let actual = rdsProvider.describeRunningInstances();
 
             expect(actual).to.eventually.have.deep.equal(expected).notify(done);
         });
@@ -229,8 +229,8 @@ describe('RDSService', () => {
             ]
             describeInstancesShouldReturns(runningInstanceList)
 
-            let rdsService = new RDSService(region);
-            let actual = rdsService.describeRunningInstances();
+            let rdsProvider = new RDSProvider(region);
+            let actual = rdsProvider.describeRunningInstances();
 
             expect(actual).to.eventually.have.deep.equal(expected).notify(done);
         });
@@ -242,8 +242,8 @@ describe('RDSService', () => {
             let expected: InstanceData[] = []
             describeInstancesShouldReturns(runningInstanceList)
 
-            let rdsService = new RDSService(region);
-            let actual = rdsService.describeRunningInstances();
+            let rdsProvider = new RDSProvider(region);
+            let actual = rdsProvider.describeRunningInstances();
 
             expect(actual).to.eventually.have.deep.equal(expected).notify(done);
         });
@@ -252,8 +252,8 @@ describe('RDSService', () => {
             let error = new Error('Error occors');
             describeRunningInstancesShouldThrows(error);
 
-            let rdsService = new RDSService(region);
-            let reservedInstances = rdsService.describeRunningInstances();
+            let rdsProvider = new RDSProvider(region);
+            let reservedInstances = rdsProvider.describeRunningInstances();
 
             expect(reservedInstances).to.be.rejectedWith(error).notify(done);
         })
@@ -266,4 +266,39 @@ describe('RDSService', () => {
             describeDBInstancesStub.callsArgWith(1, error, null);
         }
     })
+
+    describe('#getInstancesUrl', () => {
+        it('should return url for instance', () => {
+            let instanceDatas: InstanceData[] = [
+                {
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'db-JHISHIRLA3RDEIJHCLVTWQJVEM',
+                    InstanceType: "db.r3.2xlarge",
+                    AvailabilityZone: "MultiAZ-true",
+                    InstanceName: "db-1"
+                }, {
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
+                    InstanceType: "db.r3.large",
+                    AvailabilityZone: "MultiAZ-false",
+                    InstanceName: "db-2",
+                }
+            ]
+            let expected = "<https://ap-northeast-1.console.aws.amazon.com/rds/home?region=ap-northeast-1|Click to details>"
+
+            let rdsProvider = new RDSProvider(region);
+            let actual = rdsProvider.getInstancesUrl(instanceDatas);
+
+            expect(actual).to.equal(expected);
+        });
+
+        it('should return undefined if no data', () => {
+            let instanceDatas: InstanceData[] = [];
+
+            let rdsProvider = new RDSProvider(region);
+            let actual = rdsProvider.getInstancesUrl(instanceDatas);
+
+            expect(actual).to.undefined;
+        });
+    }); 
 });

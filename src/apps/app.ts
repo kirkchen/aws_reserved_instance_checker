@@ -1,4 +1,3 @@
-import EC2Service from '../services/ec2Service';
 import ReservedInstanceCalculator from '../services/reservedInstanceCalculator';
 import SlackHelper from '../services/slackHelper';
 import ResourceProvider from '../providers/resourceProvider';
@@ -23,6 +22,7 @@ export default class App {
             let notReservedInstances = this.reservedInstanceCalculator.getInstanceNotReserved(reservedInstances, runningInstances);
 
             let slackAttachment = this.slackHelper.formatInstanceToSlackAttachment(provider.ResourceType, notReservedInstances);
+            slackAttachment.footer = provider.getInstancesUrl(notReservedInstances);
             slackMessage.attachments.push(slackAttachment);
         }
         await this.slackHelper.sendToSlack(slackMessage);

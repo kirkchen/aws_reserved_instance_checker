@@ -4,7 +4,7 @@ import '../models/instanceData';
 import '../models/reservedInstanceData';
 import ResourceProvider from '../providers/resourceProvider';
 
-export default class EC2Service implements ResourceProvider {
+export default class EC2Provider implements ResourceProvider {
     constructor(
         private region: string) {
     }
@@ -101,5 +101,16 @@ export default class EC2Service implements ResourceProvider {
                 resolve([]);
             })
         });
+    }
+
+    getInstancesUrl(instanceDatas: InstanceData[]): string | undefined {
+        if(instanceDatas.length === 0){
+            return undefined;
+        }
+
+        let ids = instanceDatas.map((instance) => instance.InstanceId).join(',');
+        let result = `<https://${this.region}.console.aws.amazon.com/ec2/v2/home?region=${this.region}#Instances:instanceId=${ids};sort=instanceId|Click to details>`
+
+        return result;
     }
 }
