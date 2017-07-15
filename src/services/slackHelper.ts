@@ -12,8 +12,17 @@ export default class SlackHelper {
     }
 
     formatInstanceToSlackAttachment(resourceType: ResourceType, instances: InstanceData[]) {
-        let groupedInstanceDatas: GroupedInstanceData = {};
+        let resourceTypeString = ResourceType[resourceType];
+        if(instances.length === 0) {
+            return {
+                    title: `${resourceTypeString} instances are all in reserved instance list :tada::tada::tada:`,
+                    color: "good",
+                    fields: [
+                    ]
+                };
+        }
 
+        let groupedInstanceDatas: GroupedInstanceData = {};
         instances.forEach((instance) => {
             let key = instance.GroupKey;
             if (!groupedInstanceDatas[key]) {
@@ -23,7 +32,6 @@ export default class SlackHelper {
             groupedInstanceDatas[key].push(instance);
         })
 
-        let resourceTypeString = ResourceType[resourceType];
         let slaceMessageAttachment: SlackMessageAttachment =
             {
                 title: `${resourceTypeString} instances not in reserved instance list`,

@@ -76,6 +76,24 @@ describe('SlackHelper', () => {
             expect(actual).to.be.deep.equal(expected);
         });
 
+        it('should display success color and message if no data to alarm', () => {
+            let resourceType = ResourceType.EC2; 
+            let instanceDataList: InstanceData[] = [
+            ];
+            let expected: SlackMessageAttachment =
+                {
+                    title: "EC2 instances are all in reserved instance list :tada::tada::tada:",
+                    color: "good",
+                    fields: [
+                    ]
+                }
+
+            slackHelper = new SlackHelper(region, webhookUrl);
+            let actual = slackHelper.formatInstanceToSlackAttachment(resourceType, instanceDataList);
+
+            expect(actual).to.be.deep.equal(expected);
+        });
+
         it('should change title with correct resource type', () => {
             let resourceType = ResourceType.RDS; 
             let instanceDataList: InstanceData[] = [
