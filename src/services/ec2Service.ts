@@ -1,11 +1,15 @@
 import { EC2 } from 'aws-sdk';
+import { ResourceType } from '../providers/resourceType';
 import '../models/instanceData';
 import '../models/reservedInstanceData';
+import ResourceProvider from '../providers/resourceProvider';
 
-export default class EC2Service {
+export default class EC2Service implements ResourceProvider {
     constructor(
         private region: string) {
     }
+
+    ResourceType: ResourceType = ResourceType.EC2;
 
     describeActiveReservedInstances(): Promise<ReservedInstanceData[]> {
         let ec2 = new EC2({ region: this.region });

@@ -42,12 +42,14 @@ describe('RDSService', () => {
                     {
                         MultiAZ: true,
                         DBInstanceClass: "db.r3.8xlarge",
-                        DBInstanceCount: 1
+                        DBInstanceCount: 1,
+                        State: 'active'
                     },
                     {
                         MultiAZ: false,
                         DBInstanceClass: "db.r3.large",
-                        DBInstanceCount: 2
+                        DBInstanceCount: 2,
+                        State: 'active'
                     },
                 ]
             };
@@ -71,6 +73,37 @@ describe('RDSService', () => {
             expect(reservedInstances).to.eventually.deep.equal(expected).notify(done);
         });
 
+        it('should return reserved instances with active state', (done) => {
+            let reservedInstanceList: AWS.RDS.Types.ReservedDBInstanceMessage = {
+                ReservedDBInstances: [
+                    {
+                        MultiAZ: true,
+                        DBInstanceClass: "db.r3.8xlarge",
+                        DBInstanceCount: 1,
+                        State: 'active'
+                    },
+                    {
+                        MultiAZ: false,
+                        DBInstanceClass: "db.r3.large",
+                        DBInstanceCount: 2,
+                        State: 'retired'
+                    },
+                ]
+            };
+            let expected: ReservedInstanceData[] = [
+                {
+                    AvailabilityZone: 'MultiAZ-true',
+                    InstanceType: 'db.r3.8xlarge',
+                    InstanceCount: 1
+                }
+            ];
+            describeReservedInstancesShouldReturns(reservedInstanceList)
+
+            let rdsService = new RDSService(region);
+            let reservedInstances = rdsService.describeActiveReservedInstances();
+
+            expect(reservedInstances).to.eventually.deep.equal(expected).notify(done);
+        });
         it('should return empty array if no data exists', (done) => {
             let reservedInstanceList: AWS.RDS.ReservedDBInstanceMessage = {
                 ReservedDBInstances: undefined
@@ -128,14 +161,16 @@ describe('RDSService', () => {
                         DbiResourceId: 'db-JHISHIRLA3RDEIJHCLVTWQJVEM',
                         DBInstanceClass: "db.r3.2xlarge",
                         MultiAZ: true,
-                        DBInstanceIdentifier: "db-1"
+                        DBInstanceIdentifier: "db-1",
+                        DBInstanceStatus: 'available'
                     },
                     {
                         InstanceCreateTime: new Date('2017-02-07T08:52:21.000Z'),
                         DbiResourceId: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
                         DBInstanceClass: "db.r3.large",
                         MultiAZ: false,
-                        DBInstanceIdentifier: "db-2"
+                        DBInstanceIdentifier: "db-2",
+                        DBInstanceStatus: 'available'
                     }
                 ]
             };
@@ -152,6 +187,44 @@ describe('RDSService', () => {
                     InstanceType: "db.r3.large",
                     AvailabilityZone: "MultiAZ-false",
                     InstanceName: "db-2",
+                }
+            ]
+            describeInstancesShouldReturns(runningInstanceList)
+
+            let rdsService = new RDSService(region);
+            let actual = rdsService.describeRunningInstances();
+
+            expect(actual).to.eventually.have.deep.equal(expected).notify(done);
+        });
+
+        it('should return only insatnce with status available', (done) => {
+            let runningInstanceList: AWS.RDS.Types.DBInstanceMessage = {
+                DBInstances: [
+                    {
+                        InstanceCreateTime: new Date('2017-02-07T08:52:21.000Z'),
+                        DbiResourceId: 'db-JHISHIRLA3RDEIJHCLVTWQJVEM',
+                        DBInstanceClass: "db.r3.2xlarge",
+                        MultiAZ: true,
+                        DBInstanceIdentifier: "db-1",
+                        DBInstanceStatus: 'available'
+                    },
+                    {
+                        InstanceCreateTime: new Date('2017-02-07T08:52:21.000Z'),
+                        DbiResourceId: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
+                        DBInstanceClass: "db.r3.large",
+                        MultiAZ: false,
+                        DBInstanceIdentifier: "db-2",
+                        DBInstanceStatus: 'modify'
+                    }
+                ]
+            };
+            let expected: InstanceData[] = [
+                {
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'db-JHISHIRLA3RDEIJHCLVTWQJVEM',
+                    InstanceType: "db.r3.2xlarge",
+                    AvailabilityZone: "MultiAZ-true",
+                    InstanceName: "db-1"
                 }
             ]
             describeInstancesShouldReturns(runningInstanceList)

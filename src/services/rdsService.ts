@@ -1,25 +1,20 @@
 import { RDS } from 'aws-sdk';
+import { ResourceType } from '../providers/resourceType';
 import '../models/instanceData';
 import '../models/reservedInstanceData';
+import ResourceProvider from '../providers/resourceProvider';
 
-export default class RDSService {
+export default class RDSService implements ResourceProvider {
     constructor(
         private region: string) {
     }
 
+    ResourceType: ResourceType = ResourceType.RDS;
+
     describeActiveReservedInstances(): Promise<ReservedInstanceData[]> {
         let rds = new RDS({ region: this.region });
 
-        let params: RDS.DescribeDBInstancesMessage = {
-            Filters: [
-                {
-                    Name: 'state',
-                    Values: [
-                        'active'
-                    ]
-                }
-            ]
-        }
+        let params: RDS.DescribeReservedDBInstancesMessage = {}
 
         return new Promise((resolve, reject) => {
             rds.describeReservedDBInstances(params, (err, data) => {
@@ -29,14 +24,16 @@ export default class RDSService {
                 }
 
                 if (data.ReservedDBInstances) {
-                    let reservedInstances = data.ReservedDBInstances.map((dbInstance) => {
-                        let reservedInstance: ReservedInstanceData = {
-                            AvailabilityZone: `MultiAZ-${dbInstance.MultiAZ}`,
-                            InstanceType: dbInstance.DBInstanceClass!,
-                            InstanceCount: dbInstance.DBInstanceCount!
-                        }
-                        return reservedInstance;
-                    });
+                    let reservedInstances = data.ReservedDBInstances
+                        .filter((dbInstance) => dbInstance.State === 'active')
+                        .map((dbInstance) => {
+                            let reservedInstance: ReservedInstanceData = {
+                                AvailabilityZone: `MultiAZ-${dbInstance.MultiAZ}`,
+                                InstanceType: dbInstance.DBInstanceClass!,
+                                InstanceCount: dbInstance.DBInstanceCount!
+                            }
+                            return reservedInstance;
+                        });
 
                     resolve(reservedInstances);
                     return;
@@ -49,16 +46,7 @@ export default class RDSService {
 
     describeRunningInstances(): Promise<InstanceData[]> {
         let rds = new RDS({ region: this.region });
-        let params: RDS.Types.DescribeDBInstancesMessage = {
-            Filters: [
-                {
-                    Name: 'instance-state-name',
-                    Values: [
-                        'running'
-                    ]
-                }
-            ]
-        }
+        let params: RDS.Types.DescribeDBInstancesMessage = {}
 
         return new Promise((resolve, reject) => {
             rds.describeDBInstances(params, (err, data) => {
@@ -69,6 +57,7 @@ export default class RDSService {
 
                 if (data.DBInstances) {
                     let result: (InstanceData | undefined)[] = data.DBInstances
+                        .filter((dbInstance) => dbInstance.DBInstanceStatus === 'available')
                         .map((dbInstance) => {
                             let instanceData: InstanceData = {
                                 InstanceId: dbInstance.DbiResourceId!,

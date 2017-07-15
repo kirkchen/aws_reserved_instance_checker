@@ -1,4 +1,5 @@
 import { IncomingWebhook } from '@slack/client';
+import { ResourceType } from '../providers/resourceType';
 import '../typings/slack';
 import '../models/groupedInstanceData';
 import '../models/instanceData';
@@ -10,7 +11,7 @@ export default class SlackHelper {
         private channel?: string) {
     }
 
-    formatInstanceToSlackAttachment(instances: InstanceData[]) {
+    formatInstanceToSlackAttachment(resourceType: ResourceType, instances: InstanceData[]) {
         let groupedInstanceDatas: GroupedInstanceData = {};
 
         instances.forEach((instance) => {
@@ -22,17 +23,14 @@ export default class SlackHelper {
             groupedInstanceDatas[key].push(instance.InstanceId);
         })
 
-        let slaceMessage: SlackMessage = {
-            username: "AWS Reserved Instance Status Check",
-            attachments: [
-                {
-                    title: "EC2 instances not in reserved instance list",
-                    color: "warning",
-                    fields: [],
-                    footer: ""
-                }
-            ]
-        };
+        let resourceTypeString = ResourceType[resourceType];
+        let slaceMessageAttachment: SlackMessageAttachment =
+            {
+                title: `${resourceTypeString} instances not in reserved instance list`,
+                color: "warning",
+                fields: [],
+                footer: ""
+            }
 
         let instanceIds: string[] = []
         for (let key in groupedInstanceDatas) {
@@ -42,10 +40,7 @@ export default class SlackHelper {
                 short: true
             }
 
-            if (slaceMessage.attachments) {
-                slaceMessage.attachments[0].fields.push(field);
-            }
-
+            slaceMessageAttachment.fields.push(field)
             if (field.value) {
                 field.value.split(', ').forEach((value) => {
                     instanceIds.push(value);
@@ -53,16 +48,17 @@ export default class SlackHelper {
             }
         }
 
-        slaceMessage.attachments[0].footer = `<https://${this.region}.console.aws.amazon.com/ec2/v2/home?region=${this.region}#Instances:instanceId=${instanceIds.join(',').trim()};sort=instanceId|Click to details>`
+        // TODO: Footer should change depend on resource type
+        slaceMessageAttachment.footer = `<https://${this.region}.console.aws.amazon.com/ec2/v2/home?region=${this.region}#Instances:instanceId=${instanceIds.join(',').trim()};sort=instanceId|Click to details>`
 
-        if (this.channel) {
-            slaceMessage.channel = this.channel
-        }
-
-        return slaceMessage;
+        return slaceMessageAttachment;
     }
 
     sendToSlack(message: SlackMessage): Promise<void> {
+        if(this.channel) {
+            message.channel = this.channel;
+        }
+
         var webhook = new IncomingWebhook(this.webhookUrl);
         return new Promise<void>((resolve, reject) => {
             webhook.send(message, (err: Error) => {

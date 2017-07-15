@@ -1,4 +1,5 @@
 import EC2Service from './services/ec2Service';
+import RDSService from './services/rdsService';
 import ReservedInstanceCalculator from './services/reservedInstanceCalculator';
 import SlackHelper from './services/slackHelper';
 import App from './apps/app';
@@ -12,7 +13,10 @@ export default function CheckAwsReservedInstance(): Promise<void> {
         throw new Error('Webhook url is not set, please check your environment variable RICHECKER_WEBHOOK_URL');
     }
     let result = new App(
-        new EC2Service(region), 
+        [
+            new EC2Service(region), 
+            new RDSService(region)
+        ],
         new ReservedInstanceCalculator(), 
         new SlackHelper(region, webhookUrl, channel)).Run();
 

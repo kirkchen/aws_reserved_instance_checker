@@ -3,6 +3,7 @@ import * as chaiAsPromise from 'chai-as-promised';
 import { sandbox } from 'sinon';
 import SlackHelper from './slackHelper';
 import * as SlackClient from '@slack/client';
+import { ResourceType } from '../providers/resourceType';
 import '../models/instanceData';
 
 use(chaiAsPromise);
@@ -23,6 +24,7 @@ describe('SlackHelper', () => {
         let slackHelper: SlackHelper;
 
         it('should convert instance data to slack attachment json', () => {
+            let resourceType = ResourceType.EC2; 
             let instanceDataList: InstanceData[] = [
                 {
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
@@ -46,86 +48,60 @@ describe('SlackHelper', () => {
                     InstanceName: "instance-c",
                 }
             ];
-            let expected: SlackMessage = {
-                username: "AWS Reserved Instance Status Check",
-                attachments: [
-                    {
-                        title: "EC2 instances not in reserved instance list",
-                        color: "warning",
-                        fields: [
-                            {
-                                title: 't2.medium @ ap-northeast-1a',
-                                value: 'i-05e6b03e39edd7162, i-07d1a6fdserf3015c',
-                                short: true
-                            },
-                            {
-                                title: 'c4.large @ ap-northeast-1c',
-                                value: 'i-07d1a68260e73015c',
-                                short: true
-                            }
-                        ],
-                        footer: `<https://ap-northeast-1.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-1#Instances:instanceId=i-05e6b03e39edd7162,i-07d1a6fdserf3015c,i-07d1a68260e73015c;sort=instanceId|Click to details>`
-                    }
-                ]
-            };
+            let expected: SlackMessageAttachment =
+                {
+                    title: "EC2 instances not in reserved instance list",
+                    color: "warning",
+                    fields: [
+                        {
+                            title: 't2.medium @ ap-northeast-1a',
+                            value: 'i-05e6b03e39edd7162, i-07d1a6fdserf3015c',
+                            short: true
+                        },
+                        {
+                            title: 'c4.large @ ap-northeast-1c',
+                            value: 'i-07d1a68260e73015c',
+                            short: true
+                        }
+                    ],
+                    footer: `<https://ap-northeast-1.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-1#Instances:instanceId=i-05e6b03e39edd7162,i-07d1a6fdserf3015c,i-07d1a68260e73015c;sort=instanceId|Click to details>`
+                }
+
 
             slackHelper = new SlackHelper(region, webhookUrl);
-            let actual = slackHelper.formatInstanceToSlackAttachment(instanceDataList);
+            let actual = slackHelper.formatInstanceToSlackAttachment(resourceType, instanceDataList);
 
             expect(actual).to.be.deep.equal(expected);
         });
 
-        it('should contains channel if channel exist', () => {
-            let channel = '#my-channel'
+        it('should change title with correct resource type', () => {
+            let resourceType = ResourceType.RDS; 
             let instanceDataList: InstanceData[] = [
                 {
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
-                    InstanceId: 'i-05e6b03e39edd7162',
-                    InstanceType: "t2.medium",
-                    AvailabilityZone: "ap-northeast-1a",
-                    InstanceName: "instance-a"
-                },
-                {
-                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
-                    InstanceId: 'i-07d1a68260e73015c',
-                    InstanceType: "c4.large",
-                    AvailabilityZone: "ap-northeast-1c",
-                    InstanceName: "instance-b",
-                },
-                {
-                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
-                    InstanceId: 'i-07d1a6fdserf3015c',
-                    InstanceType: "t2.medium",
-                    AvailabilityZone: "ap-northeast-1a",
-                    InstanceName: "instance-c",
+                    InstanceId: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
+                    InstanceType: "db.t2.large",
+                    AvailabilityZone: "MultiAZ-true",
+                    InstanceName: "db-1"
                 }
             ];
-            let expected: SlackMessage = {
-                username: "AWS Reserved Instance Status Check",
-                channel: channel,
-                attachments: [
-                    {
-                        title: "EC2 instances not in reserved instance list",
-                        color: "warning",
-                        fields: [
-                            {
-                                title: 't2.medium @ ap-northeast-1a',
-                                value: 'i-05e6b03e39edd7162, i-07d1a6fdserf3015c',
-                                short: true
-                            },
-                            {
-                                title: 'c4.large @ ap-northeast-1c',
-                                value: 'i-07d1a68260e73015c',
-                                short: true
-                            }
-                        ],
-                        footer: `<https://ap-northeast-1.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-1#Instances:instanceId=i-05e6b03e39edd7162,i-07d1a6fdserf3015c,i-07d1a68260e73015c;sort=instanceId|Click to details>`
-                    }
-                ]
-            };
+            let expected: SlackMessageAttachment =
+                {
+                    title: "RDS instances not in reserved instance list",
+                    color: "warning",
+                    fields: [
+                        {
+                            title: 'db.t2.large @ MultiAZ-true',
+                            value: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
+                            short: true
+                        }
+                    ],
+                    footer: `<https://ap-northeast-1.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-1#Instances:instanceId=db-JHISHIRLA3IDENBHCLVTWQJVEM;sort=instanceId|Click to details>`
+                }
 
-            slackHelper = new SlackHelper(region, webhookUrl, channel);
-            let actual = slackHelper.formatInstanceToSlackAttachment(instanceDataList);
+
+            slackHelper = new SlackHelper(region, webhookUrl);
+            let actual = slackHelper.formatInstanceToSlackAttachment(resourceType, instanceDataList);
 
             expect(actual).to.be.deep.equal(expected);
         });
@@ -173,6 +149,25 @@ describe('SlackHelper', () => {
             let actual = slackHelper.sendToSlack(message);
 
             expect(actual).to.be.fulfilled.and.notify(done);
+        });
+
+        it('should use channel if channel exist', (done) => {
+            let channel = '#my-channel'
+            let message: SlackMessage = {
+                attachments: []
+            };
+            sendStub.callsArgWith(1, null, null);
+
+            slackHelper = new SlackHelper(region, webhookUrl, channel);
+            let actual = slackHelper.sendToSlack(message);
+
+            actual.then(()=>{
+                expect(message).to.eql({
+                   channel: channel, 
+                   attachments: [] 
+                });
+                done();
+            })
         });
 
         it('should be rejected when error occurs', (done) => {
