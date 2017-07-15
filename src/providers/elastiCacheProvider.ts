@@ -12,12 +12,12 @@ export default class ElastiCacheProvider implements ResourceProvider {
     ResourceType: ResourceType = ResourceType.ElastiCache;
 
     describeActiveReservedInstances(): Promise<ReservedInstanceData[]> {
-        let ec2 = new ElastiCache({ region: this.region });
+        let elastiCache = new ElastiCache({ region: this.region });
         let params: ElastiCache.Types.DescribeReservedCacheNodesMessage = {
         }
 
         return new Promise((resolve, reject) => {
-            ec2.describeReservedCacheNodes(params, (err, data) => {
+            elastiCache.describeReservedCacheNodes(params, (err, data) => {
                 if (err) {
                     reject(err);
                     return;
