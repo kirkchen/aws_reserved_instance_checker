@@ -1,4 +1,4 @@
-import EC2Service from './ec2Service';
+import EC2Provider from './ec2Provider';
 import { expect, use } from 'chai';
 import * as chaiAsPromise from 'chai-as-promised';
 import { sandbox } from 'sinon';
@@ -6,7 +6,7 @@ import * as AWS from 'aws-sdk';
 
 use(chaiAsPromise);
 
-describe('EC2Service', () => {
+describe('EC2Provider', () => {
     let region = 'ap-northeast-1';
     let environment: sinon.SinonSandbox;
     let ec2Stub: sinon.SinonStub;
@@ -29,8 +29,8 @@ describe('EC2Service', () => {
         it('should initial EC2 with region', () => {
             ec2Stub.withArgs({ region: region });
 
-            let ec2Service = new EC2Service(region);
-            let reservedInstances = ec2Service.describeActiveReservedInstances();
+            let ec2Provider = new EC2Provider(region);
+            let reservedInstances = ec2Provider.describeActiveReservedInstances();
 
             expect(ec2Stub.calledOnce).to.be.true;
             expect(ec2Stub.getCall(0).args[0]).to.be.eql({ region: region });
@@ -65,8 +65,8 @@ describe('EC2Service', () => {
             ]
             describeReservedInstancesShouldReturns(reservedInstanceList)
 
-            let ec2Service = new EC2Service(region);
-            let reservedInstances = ec2Service.describeActiveReservedInstances();
+            let ec2Provider = new EC2Provider(region);
+            let reservedInstances = ec2Provider.describeActiveReservedInstances();
 
             expect(reservedInstances).to.eventually.deep.equal(expected).notify(done);
         });
@@ -78,8 +78,8 @@ describe('EC2Service', () => {
             let expected: ReservedInstanceData[] = [];
             describeReservedInstancesShouldReturns(reservedInstanceList)
 
-            let ec2Service = new EC2Service(region);
-            let reservedInstances = ec2Service.describeActiveReservedInstances();
+            let ec2Provider = new EC2Provider(region);
+            let reservedInstances = ec2Provider.describeActiveReservedInstances();
 
             expect(reservedInstances).to.eventually.have.members(expected).notify(done);
         })
@@ -88,8 +88,8 @@ describe('EC2Service', () => {
             let error = new Error('Error occors');
             describeReservedInstancesShouldThrows(error);
 
-            let ec2Service = new EC2Service(region);
-            let reservedInstances = ec2Service.describeActiveReservedInstances();
+            let ec2Provider = new EC2Provider(region);
+            let reservedInstances = ec2Provider.describeActiveReservedInstances();
 
             expect(reservedInstances).to.be.rejectedWith(error).notify(done);
         })
@@ -113,8 +113,8 @@ describe('EC2Service', () => {
         it('should initial EC2 with region', () => {
             ec2Stub.withArgs({ region: region });
 
-            let ec2Service = new EC2Service(region);
-            let reservedInstances = ec2Service.describeRunningInstances();
+            let ec2Provider = new EC2Provider(region);
+            let reservedInstances = ec2Provider.describeRunningInstances();
 
             expect(ec2Stub.calledOnce).to.be.true;
             expect(ec2Stub.getCall(0).args[0]).to.be.eql({ region: region });
@@ -163,12 +163,14 @@ describe('EC2Service', () => {
             };
             let expected: InstanceData[] = [
                 {
+                    GroupKey: 't2.medium @ ap-northeast-1a',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'i-05e6b03e39edd7162',
                     InstanceType: "t2.medium",
                     AvailabilityZone: "ap-northeast-1a",
                     InstanceName: "instance-a"
                 }, {
+                    GroupKey: 't2.medium @ ap-northeast-1c',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'i-07d1a68260e73015c',
                     InstanceType: "t2.medium",
@@ -178,8 +180,8 @@ describe('EC2Service', () => {
             ]
             describeInstancesShouldReturns(runningInstanceList)
 
-            let ec2Service = new EC2Service(region);
-            let actual = ec2Service.describeRunningInstances();
+            let ec2Provider = new EC2Provider(region);
+            let actual = ec2Provider.describeRunningInstances();
 
             expect(actual).to.eventually.have.deep.equal(expected).notify(done);
         });
@@ -212,6 +214,7 @@ describe('EC2Service', () => {
             };
             let expected: InstanceData[] = [
                 {
+                    GroupKey: 't2.medium @ ap-northeast-1a',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'i-05e6b03e39edd7162',
                     InstanceType: "t2.medium",
@@ -222,8 +225,8 @@ describe('EC2Service', () => {
             ]
             describeInstancesShouldReturns(runningInstanceList)
 
-            let ec2Service = new EC2Service(region);
-            let actual = ec2Service.describeRunningInstances();
+            let ec2Provider = new EC2Provider(region);
+            let actual = ec2Provider.describeRunningInstances();
 
             expect(actual).to.eventually.have.deep.equal(expected).notify(done);
         });
@@ -235,8 +238,8 @@ describe('EC2Service', () => {
             let expected: InstanceData[] = []
             describeInstancesShouldReturns(runningInstanceList)
 
-            let ec2Service = new EC2Service(region);
-            let actual = ec2Service.describeRunningInstances();
+            let ec2Provider = new EC2Provider(region);
+            let actual = ec2Provider.describeRunningInstances();
 
             expect(actual).to.eventually.have.deep.equal(expected).notify(done);
         });
@@ -245,8 +248,8 @@ describe('EC2Service', () => {
             let error = new Error('Error occors');
             describeRunningInstancesShouldThrows(error);
 
-            let ec2Service = new EC2Service(region);
-            let reservedInstances = ec2Service.describeRunningInstances();
+            let ec2Provider = new EC2Provider(region);
+            let reservedInstances = ec2Provider.describeRunningInstances();
 
             expect(reservedInstances).to.be.rejectedWith(error).notify(done);
         })
@@ -259,4 +262,41 @@ describe('EC2Service', () => {
             describeInstancesStub.callsArgWith(1, error, null);
         }
     })
+
+    describe('#getInstancesUrl', () => {
+        it('should return url for instance', () => {
+           let instanceDatas: InstanceData[] = [
+                {
+                    GroupKey: '',
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'i-05e6b03e39edd7162',
+                    InstanceType: "t2.medium",
+                    AvailabilityZone: "ap-northeast-1a",
+                    InstanceName: "instance-a"
+                }, {
+                    GroupKey: '',
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'i-07d1a68260e73015c',
+                    InstanceType: "t2.medium",
+                    AvailabilityZone: "ap-northeast-1c",
+                    InstanceName: "instance-b",
+                }
+            ];
+            let expected = "<https://ap-northeast-1.console.aws.amazon.com/ec2/v2/home?region=ap-northeast-1#Instances:instanceId=i-05e6b03e39edd7162,i-07d1a68260e73015c;sort=instanceId|Click to details>"
+
+            let ec2Provider = new EC2Provider(region);
+            let actual = ec2Provider.getInstancesUrl(instanceDatas);
+
+            expect(actual).to.equal(expected);
+        });
+
+        it('should return undefined if no data', () => {
+            let instanceDatas: InstanceData[] = [];
+
+            let ec2Provider = new EC2Provider(region);
+            let actual = ec2Provider.getInstancesUrl(instanceDatas);
+
+            expect(actual).to.undefined;
+        });
+    }); 
 });

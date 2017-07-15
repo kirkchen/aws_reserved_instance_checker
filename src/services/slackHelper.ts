@@ -1,4 +1,5 @@
 import { IncomingWebhook } from '@slack/client';
+import { ResourceType } from '../providers/resourceType';
 import '../typings/slack';
 import '../models/groupedInstanceData';
 import '../models/instanceData';
@@ -10,42 +11,43 @@ export default class SlackHelper {
         private channel?: string) {
     }
 
-    formatInstanceToSlackAttachment(instances: InstanceData[]) {
-        let groupedInstanceDatas: GroupedInstanceData = {};
+    formatInstanceToSlackAttachment(resourceType: ResourceType, instances: InstanceData[]) {
+        let resourceTypeString = ResourceType[resourceType];
+        if(instances.length === 0) {
+            return {
+                    title: `${resourceTypeString} instances are all in reserved instance list :tada::tada::tada:`,
+                    color: "good",
+                    fields: [
+                    ]
+                };
+        }
 
+        let groupedInstanceDatas: GroupedInstanceData = {};
         instances.forEach((instance) => {
-            let key = `${instance.InstanceType} @ ${instance.AvailabilityZone}`;
+            let key = instance.GroupKey;
             if (!groupedInstanceDatas[key]) {
                 groupedInstanceDatas[key] = [];
             }
 
-            groupedInstanceDatas[key].push(instance.InstanceId);
+            groupedInstanceDatas[key].push(instance);
         })
 
-        let slaceMessage: SlackMessage = {
-            username: "AWS Reserved Instance Status Check",
-            attachments: [
-                {
-                    title: "EC2 instances not in reserved instance list",
-                    color: "warning",
-                    fields: [],
-                    footer: ""
-                }
-            ]
-        };
+        let slaceMessageAttachment: SlackMessageAttachment =
+            {
+                title: `${resourceTypeString} instances not in reserved instance list`,
+                color: "warning",
+                fields: []
+            }
 
         let instanceIds: string[] = []
         for (let key in groupedInstanceDatas) {
             let field: SlackMessageAttachmentField = {
                 title: key,
-                value: groupedInstanceDatas[key].join(', '),
+                value: groupedInstanceDatas[key].map((instance)=>instance.InstanceName).join(', '),
                 short: true
             }
 
-            if (slaceMessage.attachments) {
-                slaceMessage.attachments[0].fields.push(field);
-            }
-
+            slaceMessageAttachment.fields.push(field)
             if (field.value) {
                 field.value.split(', ').forEach((value) => {
                     instanceIds.push(value);
@@ -53,16 +55,14 @@ export default class SlackHelper {
             }
         }
 
-        slaceMessage.attachments[0].footer = `<https://${this.region}.console.aws.amazon.com/ec2/v2/home?region=${this.region}#Instances:instanceId=${instanceIds.join(',').trim()};sort=instanceId|Click to details>`
-
-        if (this.channel) {
-            slaceMessage.channel = this.channel
-        }
-
-        return slaceMessage;
+        return slaceMessageAttachment;
     }
 
     sendToSlack(message: SlackMessage): Promise<void> {
+        if(this.channel) {
+            message.channel = this.channel;
+        }
+
         var webhook = new IncomingWebhook(this.webhookUrl);
         return new Promise<void>((resolve, reject) => {
             webhook.send(message, (err: Error) => {

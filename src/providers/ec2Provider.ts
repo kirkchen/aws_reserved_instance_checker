@@ -1,11 +1,15 @@
 import { EC2 } from 'aws-sdk';
+import { ResourceType } from '../providers/resourceType';
 import '../models/instanceData';
 import '../models/reservedInstanceData';
+import ResourceProvider from '../providers/resourceProvider';
 
-export default class EC2Service {
+export default class EC2Provider implements ResourceProvider {
     constructor(
         private region: string) {
     }
+
+    ResourceType: ResourceType = ResourceType.EC2;
 
     describeActiveReservedInstances(): Promise<ReservedInstanceData[]> {
         let ec2 = new EC2({ region: this.region });
@@ -78,10 +82,11 @@ export default class EC2Service {
                                 }
 
                                 let instanceData: InstanceData = {
-                                    InstanceId: instance.InstanceId || '',
-                                    InstanceType: instance.InstanceType || '',
-                                    LaunchTime: instance.LaunchTime || new Date(),
-                                    AvailabilityZone: availabilityZone || '',
+                                    GroupKey: `${instance.InstanceType} @ ${availabilityZone}`,
+                                    InstanceId: instance.InstanceId!,
+                                    InstanceType: instance.InstanceType!,
+                                    LaunchTime: instance.LaunchTime!,
+                                    AvailabilityZone: availabilityZone!,
                                     InstanceName: instanceName
                                 };
 
@@ -97,5 +102,16 @@ export default class EC2Service {
                 resolve([]);
             })
         });
+    }
+
+    getInstancesUrl(instanceDatas: InstanceData[]): string | undefined {
+        if(instanceDatas.length === 0){
+            return undefined;
+        }
+
+        let ids = instanceDatas.map((instance) => instance.InstanceId).join(',');
+        let result = `<https://${this.region}.console.aws.amazon.com/ec2/v2/home?region=${this.region}#Instances:instanceId=${ids};sort=instanceId|Click to details>`
+
+        return result;
     }
 }
