@@ -1,5 +1,6 @@
 import EC2Provider from './providers/ec2Provider';
 import RDSProvider from './providers/rdsProvider';
+import ElastiCacheProvider from './providers/elastiCacheProvider';
 import ReservedInstanceCalculator from './services/reservedInstanceCalculator';
 import SlackHelper from './services/slackHelper';
 import App from './apps/app';
@@ -15,7 +16,8 @@ export default function CheckAwsReservedInstance(): Promise<void> {
     let result = new App(
         [
             new EC2Provider(region), 
-            new RDSProvider(region)
+            new RDSProvider(region),
+            new ElastiCacheProvider(region)
         ],
         new ReservedInstanceCalculator(), 
         new SlackHelper(region, webhookUrl, channel)).Run();

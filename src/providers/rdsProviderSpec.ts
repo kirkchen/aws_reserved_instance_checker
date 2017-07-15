@@ -104,6 +104,7 @@ describe('RDSProvider', () => {
 
             expect(reservedInstances).to.eventually.deep.equal(expected).notify(done);
         });
+
         it('should return empty array if no data exists', (done) => {
             let reservedInstanceList: AWS.RDS.ReservedDBInstanceMessage = {
                 ReservedDBInstances: undefined
