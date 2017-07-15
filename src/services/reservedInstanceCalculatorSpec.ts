@@ -24,6 +24,7 @@ describe('ReservedInstanceCalculator', () => {
             ]
             let instanceList: InstanceData[] = [
                 {
+                    GroupKey: '',
                     InstanceId: 'i-05e6b03e39edd7162',
                     InstanceType: 't2.medium',
                     AvailabilityZone: "ap-northeast-1a",
@@ -31,6 +32,7 @@ describe('ReservedInstanceCalculator', () => {
                     InstanceName: 'instance a'
                 },
                 {
+                    GroupKey: '',
                     InstanceId: 'i-07d1a68260e73015c',
                     InstanceType: 'c4.large',
                     AvailabilityZone: "ap-northeast-1a",
@@ -40,6 +42,7 @@ describe('ReservedInstanceCalculator', () => {
             ]
             let expected:  InstanceData[] = [
                 {
+                    GroupKey: '',
                     InstanceId: 'i-07d1a68260e73015c',
                     InstanceType: 'c4.large',
                     AvailabilityZone: "ap-northeast-1a",
