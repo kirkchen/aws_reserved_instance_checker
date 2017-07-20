@@ -24,5 +24,3 @@ export default function CheckAwsReservedInstance(): Promise<void> {
 
     return result;
 }
-
-CheckAwsReservedInstance();
