@@ -125,6 +125,38 @@ describe('SlackHelper', () => {
 
             expect(actual).to.be.deep.equal(expected);
         });
+
+        it('should change title with excluded if resource type is exclude', () => {
+            let resourceType = ResourceType.Excluded; 
+            let instanceDataList: InstanceData[] = [
+                {
+                    GroupKey: 'db.t2.large with MultiAZ',
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
+                    InstanceType: "db.t2.large",
+                    AvailabilityZone: "MultiAZ-true",
+                    InstanceName: "db-1"
+                }
+            ];
+            let expected: SlackMessageAttachment =
+                {
+                    title: "Instances which is excluded",
+                    color: "good",
+                    fields: [
+                        {
+                            title: 'db.t2.large with MultiAZ',
+                            value: 'db-1',
+                            short: true
+                        }
+                    ]
+                }
+
+
+            slackHelper = new SlackHelper(region, webhookUrl);
+            let actual = slackHelper.formatInstanceToSlackAttachment(resourceType, instanceDataList);
+
+            expect(actual).to.be.deep.equal(expected);
+        });
     });
 
     describe('#sendToSlack', () => {

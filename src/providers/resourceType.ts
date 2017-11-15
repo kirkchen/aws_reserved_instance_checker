@@ -3,5 +3,7 @@ export enum ResourceType {
 
     RDS,
     
-    ElastiCache
+    ElastiCache,
+
+    Excluded
 }
