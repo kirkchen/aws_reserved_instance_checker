@@ -145,5 +145,75 @@ describe('App', () => {
                 done();
             })
         })
+
+        it('without exclude pattern should work correctly', (done) => {
+            ec2ServiceStub.prototype.describeActiveReservedInstances.returns(Promise.resolve({}));
+            ec2ServiceStub.prototype.describeRunningInstances.returns(Promise.resolve({}));
+            ec2ServiceStub.prototype.getInstancesUrl.returns('http://instance/url');
+            reservedInstanceCalculatorStub.prototype.getInstanceNotReserved.returns([
+                {
+                    GroupKey: 't2.medium @ ap-northeast-1a',
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'i-05e6b03e39edd7162',
+                    InstanceType: "t2.medium",
+                    AvailabilityZone: "ap-northeast-1a",
+                    InstanceName: "instance-a"
+                }, {
+                    GroupKey: 't2.medium @ ap-northeast-1c',
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'i-07d1a68260e73015c',
+                    InstanceType: "t2.medium",
+                    AvailabilityZone: "ap-northeast-1c",
+                    InstanceName: "instance-b",
+                }
+            ]);
+            slackHelperStub.prototype.formatInstanceToSlackAttachment.returns({});
+            slackHelperStub.prototype.sendToSlack.returns(Promise.resolve());
+
+            let app = new App(
+                [
+                    new ec2ServiceStub
+                ],
+                new reservedInstanceCalculatorStub(),
+                new slackHelperStub(region, webhookUrl));
+            let actual = app.Run();
+
+            actual.then(() => {
+                expect(ec2ServiceStub.prototype.describeActiveReservedInstances.called).to.be.true;
+                expect(ec2ServiceStub.prototype.describeRunningInstances.called).to.be.true;
+                expect(ec2ServiceStub.prototype.getInstancesUrl.calledWith([{
+                    GroupKey: 't2.medium @ ap-northeast-1a',
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'i-05e6b03e39edd7162',
+                    InstanceType: "t2.medium",
+                    AvailabilityZone: "ap-northeast-1a",
+                    InstanceName: "instance-a"
+                }, {
+                    GroupKey: 't2.medium @ ap-northeast-1c',
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'i-07d1a68260e73015c',
+                    InstanceType: "t2.medium",
+                    AvailabilityZone: "ap-northeast-1c",
+                    InstanceName: "instance-b",
+                }])).to.be.true;
+                expect(reservedInstanceCalculatorStub.prototype.getInstanceNotReserved.called).to.be.true;
+                expect(slackHelperStub.prototype.formatInstanceToSlackAttachment.calledWith(ResourceType.EC2, [{
+                    GroupKey: 't2.medium @ ap-northeast-1a',
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'i-05e6b03e39edd7162',
+                    InstanceType: "t2.medium",
+                    AvailabilityZone: "ap-northeast-1a",
+                    InstanceName: "instance-a"
+                }, {
+                    GroupKey: 't2.medium @ ap-northeast-1c',
+                    LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
+                    InstanceId: 'i-07d1a68260e73015c',
+                    InstanceType: "t2.medium",
+                    AvailabilityZone: "ap-northeast-1c",
+                    InstanceName: "instance-b",
+                }])).to.be.true;
+                done();
+            })
+        })
     });
 });
