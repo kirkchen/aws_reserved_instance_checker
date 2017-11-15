@@ -30,7 +30,8 @@ export default class ElastiCacheProvider implements ResourceProvider {
                             let node: ReservedInstanceData = {
                                 AvailabilityZone: '',
                                 InstanceCount: cacheNode.CacheNodeCount!,
-                                InstanceType: cacheNode.CacheNodeType!
+                                InstanceType: cacheNode.CacheNodeType!,
+                                CompareKey: cacheNode.CacheNodeType!,
                             }
                             return node;
                         })
@@ -63,7 +64,8 @@ export default class ElastiCacheProvider implements ResourceProvider {
                                 InstanceType: cacheCluster.CacheNodeType!,
                                 LaunchTime: cacheCluster.CacheClusterCreateTime!,
                                 AvailabilityZone: '',
-                                InstanceName: cacheCluster.CacheClusterId
+                                InstanceName: cacheCluster.CacheClusterId,
+                                CompareKey: cacheCluster.CacheNodeType!,
                             };
 
                             return instanceData;

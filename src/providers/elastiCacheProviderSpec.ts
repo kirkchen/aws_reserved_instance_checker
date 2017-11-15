@@ -55,12 +55,14 @@ describe('elastiCacheProvider', () => {
                 {
                     AvailabilityZone: '',
                     InstanceType: 'cache.t2.medium',
-                    InstanceCount: 2
+                    InstanceCount: 2,
+                    CompareKey: 'cache.t2.medium',
                 },
                 {
                     AvailabilityZone: '',
                     InstanceType: 'cache.r3.large',
-                    InstanceCount: 4
+                    InstanceCount: 4,
+                    CompareKey: 'cache.r3.large',
                 }
             ]
             describeReservedInstancesShouldReturns(reservedInstanceList)
@@ -90,7 +92,8 @@ describe('elastiCacheProvider', () => {
                 {
                     AvailabilityZone: '',
                     InstanceType: 'cache.t2.medium',
-                    InstanceCount: 2
+                    InstanceCount: 2,
+                    CompareKey: 'cache.t2.medium',
                 }
             ];
             describeReservedInstancesShouldReturns(reservedInstanceList)
@@ -173,7 +176,8 @@ describe('elastiCacheProvider', () => {
                     InstanceId: 'redis-001',
                     InstanceType: "cache.t2.medium",
                     AvailabilityZone: "",
-                    InstanceName: "redis-001"
+                    InstanceName: "redis-001",
+                    CompareKey: "cache.t2.medium",
                 }, {
                     GroupKey: 'cache.t2.large',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
@@ -181,6 +185,7 @@ describe('elastiCacheProvider', () => {
                     InstanceType: "cache.t2.large",
                     AvailabilityZone: "",
                     InstanceName: "redis-002",
+                    CompareKey: "cache.t2.large",
                 }
             ]
             describeInstancesShouldReturns(runningInstanceList)

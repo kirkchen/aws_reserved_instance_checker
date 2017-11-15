@@ -4,4 +4,6 @@ interface ReservedInstanceData {
     AvailabilityZone: string;
 
     InstanceCount: number;
+
+    CompareKey?: string;
 }

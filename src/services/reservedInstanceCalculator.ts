@@ -9,8 +9,9 @@ export default class ReservedInstanceCalculator {
         for (let runningInstance of runningInstanceList) {
             let isInstanceReserved: boolean = false;
             for (let reservedInstance of reservedInstanceList) {
+                // TODO: Only use compare key
                 if (reservedInstance.InstanceType === runningInstance.InstanceType &&
-                    reservedInstance.AvailabilityZone === runningInstance.AvailabilityZone) {
+                    reservedInstance.CompareKey === runningInstance.CompareKey) {
                     reservedInstance.InstanceCount--;
                     isInstanceReserved = true;
                     break;
