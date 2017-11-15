@@ -9,6 +9,7 @@ export default function CheckAwsReservedInstance(): Promise<void> {
     let webhookUrl: string | undefined = process.env.RICHECKER_WEBHOOK_URL;
     let region: string = process.env.RICHECKER_REGION || 'us-east-1';
     let channel: string | undefined = process.env.RICHECKER_SLACK_CHANNEL;
+    let excludePattern: string | undefined = process.env.RICHECKER_EXCLUDE_PATTERN;
 
     if (!webhookUrl) {
         throw new Error('Webhook url is not set, please check your environment variable RICHECKER_WEBHOOK_URL');
@@ -20,7 +21,8 @@ export default function CheckAwsReservedInstance(): Promise<void> {
             new ElastiCacheProvider(region)
         ],
         new ReservedInstanceCalculator(), 
-        new SlackHelper(region, webhookUrl, channel)).Run();
+        new SlackHelper(region, webhookUrl, channel),
+        excludePattern).Run();
 
     return result;
 }
