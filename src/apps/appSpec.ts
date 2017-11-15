@@ -29,7 +29,7 @@ describe('App', () => {
             ec2ServiceStub.prototype.getInstancesUrl = environment.stub();
 
             rdsServiceStub = environment.stub(RDSServiceBase, "RDSService");
-            rdsServiceStub.prototype.ResourceType = ResourceType.EC2;
+            rdsServiceStub.prototype.ResourceType = ResourceType.RDS;
             rdsServiceStub.prototype.describeActiveReservedInstances = environment.stub();
             rdsServiceStub.prototype.describeRunningInstances = environment.stub();
             rdsServiceStub.prototype.getInstancesUrl = environment.stub();
