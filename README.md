@@ -21,5 +21,6 @@ Prevent unexpected cost and make sure all the running instance is covered by res
     $ export RICHECKER_WEBHOOK_URL={YOUR SLACK WEBHOOK URL}
     $ export RICHECKER_REGION={YOUR AWS REGION (default: us-east-1)}    # Optional
     $ export RICHECKER_SLACK_CHANNEL={YOUR SLACK CHANNEL}               # Optional
+    $ export RICHECKER_EXCLUDE_PATTERN={INSTANCE YOU WANT TO EXCLUDE}   # Optional
     $ aws_reserved_instance_checker
     ```
