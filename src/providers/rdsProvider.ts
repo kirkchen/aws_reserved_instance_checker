@@ -28,9 +28,10 @@ export default class RDSProvider implements ResourceProvider {
                         .filter((dbInstance) => dbInstance.State === 'active')
                         .map((dbInstance) => {
                             let reservedInstance: ReservedInstanceData = {
-                                AvailabilityZone: `MultiAZ-${dbInstance.MultiAZ}`,
+                                AvailabilityZone: '',
                                 InstanceType: dbInstance.DBInstanceClass!,
-                                InstanceCount: dbInstance.DBInstanceCount!
+                                InstanceCount: dbInstance.DBInstanceCount!,
+                                CompareKey: `MultiAZ-${dbInstance.MultiAZ}`
                             }
                             return reservedInstance;
                         });
@@ -64,8 +65,9 @@ export default class RDSProvider implements ResourceProvider {
                                 InstanceId: dbInstance.DbiResourceId!,
                                 InstanceType: dbInstance.DBInstanceClass!,
                                 LaunchTime: dbInstance.InstanceCreateTime!,
-                                AvailabilityZone: `MultiAZ-${dbInstance.MultiAZ}`,
-                                InstanceName: dbInstance.DBInstanceIdentifier
+                                AvailabilityZone: '',
+                                InstanceName: dbInstance.DBInstanceIdentifier,
+                                CompareKey: `MultiAZ-${dbInstance.MultiAZ}`
                             };
 
                             return instanceData;

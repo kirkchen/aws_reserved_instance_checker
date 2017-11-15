@@ -55,12 +55,14 @@ describe('EC2Provider', () => {
                 {
                     AvailabilityZone: 'ap-northeast-1',
                     InstanceType: 't2.medium',
-                    InstanceCount: 2
+                    InstanceCount: 2,
+                    CompareKey: 't2.medium',
                 },
                 {
                     AvailabilityZone: 'ap-northeast-1',
                     InstanceType: 't2.large',
-                    InstanceCount: 4
+                    InstanceCount: 4,
+                    CompareKey: 't2.large',
                 }
             ]
             describeReservedInstancesShouldReturns(reservedInstanceList)
@@ -168,7 +170,8 @@ describe('EC2Provider', () => {
                     InstanceId: 'i-05e6b03e39edd7162',
                     InstanceType: "t2.medium",
                     AvailabilityZone: "ap-northeast-1a",
-                    InstanceName: "instance-a"
+                    InstanceName: "instance-a",
+                    CompareKey: "t2.medium"
                 }, {
                     GroupKey: 't2.medium @ ap-northeast-1c',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
@@ -176,6 +179,7 @@ describe('EC2Provider', () => {
                     InstanceType: "t2.medium",
                     AvailabilityZone: "ap-northeast-1c",
                     InstanceName: "instance-b",
+                    CompareKey: "t2.medium"
                 }
             ]
             describeInstancesShouldReturns(runningInstanceList)
@@ -219,8 +223,8 @@ describe('EC2Provider', () => {
                     InstanceId: 'i-05e6b03e39edd7162',
                     InstanceType: "t2.medium",
                     AvailabilityZone: "ap-northeast-1a",
-                    InstanceName: "instance-a"
-
+                    InstanceName: "instance-a",
+                    CompareKey: "t2.medium"
                 }
             ]
             describeInstancesShouldReturns(runningInstanceList)

@@ -10,4 +10,6 @@ interface InstanceData {
     LaunchTime: Date;
 
     InstanceName?: string;
+
+    CompareKey?: string;
 }

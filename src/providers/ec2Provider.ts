@@ -32,6 +32,7 @@ export default class EC2Provider implements ResourceProvider {
                 }
 
                 if (data.ReservedInstances) {
+                    data.ReservedInstances.forEach(i => (i as ReservedInstanceData).CompareKey = i.InstanceType);
                     resolve(data.ReservedInstances as ReservedInstanceData[]);
                     return;
                 }
@@ -87,7 +88,8 @@ export default class EC2Provider implements ResourceProvider {
                                     InstanceType: instance.InstanceType!,
                                     LaunchTime: instance.LaunchTime!,
                                     AvailabilityZone: availabilityZone!,
-                                    InstanceName: instanceName
+                                    InstanceName: instanceName,
+                                    CompareKey: instance.InstanceType
                                 };
 
                                 return instanceData;

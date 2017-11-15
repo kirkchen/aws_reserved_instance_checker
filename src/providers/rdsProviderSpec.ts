@@ -55,14 +55,16 @@ describe('RDSProvider', () => {
             };
             let expected: ReservedInstanceData[] = [
                 {
-                    AvailabilityZone: 'MultiAZ-true',
+                    AvailabilityZone: '',
                     InstanceType: 'db.r3.8xlarge',
-                    InstanceCount: 1
+                    InstanceCount: 1,
+                    CompareKey: 'MultiAZ-true',
                 },
                 {
-                    AvailabilityZone: 'MultiAZ-false',
+                    AvailabilityZone: '',
                     InstanceType: 'db.r3.large',
-                    InstanceCount: 2
+                    InstanceCount: 2,
+                    CompareKey: 'MultiAZ-false',
                 }
             ]
             describeReservedInstancesShouldReturns(reservedInstanceList)
@@ -92,9 +94,10 @@ describe('RDSProvider', () => {
             };
             let expected: ReservedInstanceData[] = [
                 {
-                    AvailabilityZone: 'MultiAZ-true',
+                    AvailabilityZone: '',
                     InstanceType: 'db.r3.8xlarge',
-                    InstanceCount: 1
+                    InstanceCount: 1,
+                    CompareKey: 'MultiAZ-true',
                 }
             ];
             describeReservedInstancesShouldReturns(reservedInstanceList)
@@ -181,15 +184,17 @@ describe('RDSProvider', () => {
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'db-JHISHIRLA3RDEIJHCLVTWQJVEM',
                     InstanceType: "db.r3.2xlarge",
-                    AvailabilityZone: "MultiAZ-true",
-                    InstanceName: "db-1"
+                    AvailabilityZone: '',
+                    InstanceName: "db-1",
+                    CompareKey: "MultiAZ-true",
                 }, {
                     GroupKey: 'db.r3.large without MultiAZ',
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'db-JHISHIRLA3IDENBHCLVTWQJVEM',
                     InstanceType: "db.r3.large",
-                    AvailabilityZone: "MultiAZ-false",
+                    AvailabilityZone: '',
                     InstanceName: "db-2",
+                    CompareKey: "MultiAZ-false",
                 }
             ]
             describeInstancesShouldReturns(runningInstanceList)
@@ -227,8 +232,9 @@ describe('RDSProvider', () => {
                     LaunchTime: new Date('2017-02-07T08:52:21.000Z'),
                     InstanceId: 'db-JHISHIRLA3RDEIJHCLVTWQJVEM',
                     InstanceType: "db.r3.2xlarge",
-                    AvailabilityZone: "MultiAZ-true",
-                    InstanceName: "db-1"
+                    AvailabilityZone: '',
+                    InstanceName: "db-1",
+                    CompareKey: "MultiAZ-true",
                 }
             ]
             describeInstancesShouldReturns(runningInstanceList)

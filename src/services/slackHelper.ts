@@ -13,13 +13,18 @@ export default class SlackHelper {
 
     formatInstanceToSlackAttachment(resourceType: ResourceType, instances: InstanceData[]) {
         let resourceTypeString = ResourceType[resourceType];
-        if(instances.length === 0) {
+        if (instances.length === 0) {
+            let title = `${resourceTypeString} instances are all in reserved instance list :tada::tada::tada:`;
+            if(resourceType === ResourceType.Excluded){
+                title = 'There are no excluded instances';
+            }
+
             return {
-                    title: `${resourceTypeString} instances are all in reserved instance list :tada::tada::tada:`,
-                    color: "good",
-                    fields: [
-                    ]
-                };
+                title: title,
+                color: "good",
+                fields: [
+                ]
+            };
         }
 
         let groupedInstanceDatas: GroupedInstanceData = {};
@@ -32,10 +37,16 @@ export default class SlackHelper {
             groupedInstanceDatas[key].push(instance);
         })
 
+        let title = `${resourceTypeString} instances not in reserved instance list`;
+        let color = 'warning';
+        if (resourceType === ResourceType.Excluded) {
+            title = "Instances which is excluded";
+            color = 'good';
+        }
         let slaceMessageAttachment: SlackMessageAttachment =
             {
-                title: `${resourceTypeString} instances not in reserved instance list`,
-                color: "warning",
+                title: title,
+                color: color,
                 fields: []
             }
 
@@ -43,7 +54,7 @@ export default class SlackHelper {
         for (let key in groupedInstanceDatas) {
             let field: SlackMessageAttachmentField = {
                 title: key,
-                value: groupedInstanceDatas[key].map((instance)=>instance.InstanceName).join(', '),
+                value: groupedInstanceDatas[key].map((instance) => instance.InstanceName).join(', '),
                 short: true
             }
 
@@ -59,7 +70,7 @@ export default class SlackHelper {
     }
 
     sendToSlack(message: SlackMessage): Promise<void> {
-        if(this.channel) {
+        if (this.channel) {
             message.channel = this.channel;
         }
 
