@@ -94,6 +94,24 @@ describe('SlackHelper', () => {
             expect(actual).to.be.deep.equal(expected);
         });
 
+        it('should display success color and message if no exclued instances', () => {
+            let resourceType = ResourceType.Excluded; 
+            let instanceDataList: InstanceData[] = [
+            ];
+            let expected: SlackMessageAttachment =
+                {
+                    title: "There are no excluded instances",
+                    color: "good",
+                    fields: [
+                    ]
+                }
+
+            slackHelper = new SlackHelper(region, webhookUrl);
+            let actual = slackHelper.formatInstanceToSlackAttachment(resourceType, instanceDataList);
+
+            expect(actual).to.be.deep.equal(expected);
+        });
+
         it('should change title with correct resource type', () => {
             let resourceType = ResourceType.RDS; 
             let instanceDataList: InstanceData[] = [

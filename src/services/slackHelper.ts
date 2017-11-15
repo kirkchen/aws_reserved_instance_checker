@@ -14,8 +14,13 @@ export default class SlackHelper {
     formatInstanceToSlackAttachment(resourceType: ResourceType, instances: InstanceData[]) {
         let resourceTypeString = ResourceType[resourceType];
         if (instances.length === 0) {
+            let title = `${resourceTypeString} instances are all in reserved instance list :tada::tada::tada:`;
+            if(resourceType === ResourceType.Excluded){
+                title = 'There are no excluded instances';
+            }
+
             return {
-                title: `${resourceTypeString} instances are all in reserved instance list :tada::tada::tada:`,
+                title: title,
                 color: "good",
                 fields: [
                 ]
