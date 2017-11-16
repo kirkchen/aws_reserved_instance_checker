@@ -56,5 +56,46 @@ describe('ReservedInstanceCalculator', () => {
             expect(actual).to.be.deep.equal(expected);
         })
 
+        it('should return instance which is over reserved instance count', () => {
+            let reservedInstanceList: ReservedInstanceData[] = [
+                {
+                    InstanceType: "t2.medium",
+                    AvailabilityZone: "ap-northeast-1a",
+                    InstanceCount: 1
+                }
+            ]
+            let instanceList: InstanceData[] = [
+                {
+                    GroupKey: '',
+                    InstanceId: 'i-05e6b03e39edd7162',
+                    InstanceType: 't2.medium',
+                    AvailabilityZone: "ap-northeast-1a",
+                    LaunchTime: new Date(),
+                    InstanceName: 'instance a'
+                },
+                {
+                    GroupKey: '',
+                    InstanceId: 'i-07d1a68260e73015c',
+                    InstanceType: 't2.medium',
+                    AvailabilityZone: "ap-northeast-1a",
+                    LaunchTime: new Date(),
+                    InstanceName: 'instance b'
+                }
+            ]
+            let expected:  InstanceData[] = [
+                {
+                    GroupKey: '',
+                    InstanceId: 'i-07d1a68260e73015c',
+                    InstanceType: 't2.medium',
+                    AvailabilityZone: "ap-northeast-1a",
+                    LaunchTime: new Date(),
+                    InstanceName: 'instance b'
+                } 
+            ];
+
+            let actual = reservedInstanceCalculator.getInstanceNotReserved(reservedInstanceList, instanceList);
+
+            expect(actual).to.be.deep.equal(expected);
+        })
     })
 })
